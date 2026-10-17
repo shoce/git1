@@ -19,11 +19,15 @@ jobs:
       IMAGE: "${{ steps.image.outputs.IMAGE }}"
       VERSION: "${{ steps.version.outputs.VERSION }}"
     steps:
-      - name: "image"
+      - id: "image"
         run: |
           echo "IMAGE=${REGISTRY}/${GITHUB_REPOSITORY,,}" >> "$GITHUB_ENV"
-      - name: "version"
+      - id: "version"
         uses: "shoce/action-version@v1"
+      - id: "output"
+        run: |
+          echo "IMAGE=${IMAGE}" >> "$GITHUB_OUTPUT"
+          echo "VERSION=${VERSION}" >> "$GITHUB_OUTPUT"
   
   build:
     
