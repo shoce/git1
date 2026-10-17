@@ -16,8 +16,8 @@ jobs:
   
     runs-on: "ubuntu-24.04"
     outputs:
-      IMAGE: "${{ steps.image.outputs.IMAGE }}"
-      VERSION: "${{ steps.version.outputs.VERSION }}"
+      IMAGE: "${{ steps.out.outputs.IMAGE }}"
+      VERSION: "${{ steps.out.outputs.VERSION }}"
     steps:
       - id: "image"
         run: |
