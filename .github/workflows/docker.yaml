@@ -12,7 +12,22 @@ env:
 
 jobs:
 
+  imageversion:
+  
+    runs-on: "ubuntu-24.04"
+    outputs:
+      IMAGE: "${{ steps.image.outputs.IMAGE }}"
+      VERSION: "${{ steps.version.outputs.VERSION }}"
+    steps:
+      - name: "image"
+        run: |
+          echo "IMAGE=${REGISTRY}/${GITHUB_REPOSITORY,,}" >> "$GITHUB_ENV"
+      - name: "version"
+        uses: "shoce/action-version@v1"
+  
   build:
+    
+    needs: "imageversion"
     
     strategy:
       matrix:
@@ -27,18 +42,16 @@ jobs:
     permissions:
       contents: "read"
       packages: "write"
-      
+    
+    env:
+      IMAGE: "${{ needs.imageversion.outputs.IMAGE }}"
+      VERSION: "${{ needs.imageversion.outputs.VERSION }}"
+    
     steps:
-      
-      - uses: "shoce/action-version@v1"
       
       - uses: "actions/checkout@v7"
 
       - uses: "cachix/install-nix-action@v31"
-
-      - name: "image name"
-        run: |
-          echo "IMAGE=${REGISTRY}/${GITHUB_REPOSITORY,,}" >> "$GITHUB_ENV"
 
       - name: "nix build"
         run: "nix build .#default --print-build-logs"
@@ -46,8 +59,8 @@ jobs:
       - uses: "docker/login-action@v4"
         with:
           registry: "ghcr.io"
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
+          username: "${{ github.actor }}"
+          password: "${{ secrets.GITHUB_TOKEN }}"
 
       - name: "load tag push"
         run: |
@@ -58,11 +71,18 @@ jobs:
 
   manifest:
     
-    needs: "build"
+    needs:
+      - "imageversion"
+      - "build"
+    
     runs-on: "ubuntu-24.04"
     permissions:
       packages: "write"
-      
+    
+    env:
+      IMAGE: "${{ needs.imageversion.outputs.IMAGE }}"
+      VERSION: "${{ needs.imageversion.outputs.VERSION }}"
+    
     steps:
     
       - name: "image name"
