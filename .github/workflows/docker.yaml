@@ -75,8 +75,9 @@ jobs:
       - name: "multi-arch manifest"
         run: |
           docker buildx imagetools create \
+            -t "${IMAGE}:latest" \
             -t "${IMAGE}:${GITHUB_SHA::12}" 
             "${IMAGE}:${GITHUB_SHA::12}-amd64" \
-            "${IMAGE}:${GITHUB_SHA::12}-arm64"
+            "${IMAGE}:${GITHUB_SHA::12}-arm64" 
 
 
