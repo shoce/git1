@@ -29,7 +29,9 @@ jobs:
       packages: "write"
       
     steps:
-    
+      
+      - uses: "shoce/action-version@v1"
+      
       - uses: "actions/checkout@v7"
 
       - uses: "cachix/install-nix-action@v31"
@@ -50,8 +52,8 @@ jobs:
       - name: "load tag push"
         run: |
           docker load -i result
-          docker tag "git1:latest" "${IMAGE}:${GITHUB_SHA::12}-${{ matrix.arch }}"
-          docker push "${IMAGE}:${GITHUB_SHA::12}-${{ matrix.arch }}"
+          docker tag "git1:latest" "${IMAGE}:${VERSION}-${{ matrix.arch }}"
+          docker push "${IMAGE}:${VERSION}-${{ matrix.arch }}"
 
 
   manifest:
@@ -77,8 +79,8 @@ jobs:
         run: |
           docker buildx imagetools create \
             -t "${IMAGE}:latest" \
-            -t "${IMAGE}:${GITHUB_SHA::12}" \
-            "${IMAGE}:${GITHUB_SHA::12}-amd64" \
-            "${IMAGE}:${GITHUB_SHA::12}-arm64" 
+            -t "${IMAGE}:${VERSION}" \
+            "${IMAGE}:${VERSION}-amd64" \
+            "${IMAGE}:${VERSION}-arm64" 
 
 
