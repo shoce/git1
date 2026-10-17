@@ -31,18 +31,26 @@
 
           entrypoint = pkgs.writeShellApplication {
             name = "entrypoint";
-            runtimeInputs = [ pkgs.coreutils pkgs.openssh ];
+            runtimeInputs = [ pkgs.coreutils pkgs.openssh pkgs.gnugrep ];
             text = ''
               mkdir -p /data/.ssh /data/.hostkeys
-              [ -f /data/.hostkeys/ssh_host_ed25519_key ] || ssh-keygen -q -t ed25519 -N "" -f /data/.hostkeys/ssh_host_ed25519_key
+              [ -f /data/.hostkeys/ssh_host_ed25519_key ] || \
+                ssh-keygen -q -t ed25519 -N "" -f /data/.hostkeys/ssh_host_ed25519_key
               touch /data/.ssh/authorized_keys
+          
+              printf '%s\n' "''${SSH_AUTHORIZED_KEYS:-}" | while IFS= read -r key; do
+                [ -n "$key" ] || continue
+                grep -qxF -- "$key" /data/.ssh/authorized_keys || \
+                  printf '%s\n' "$key" >> /data/.ssh/authorized_keys
+              done
+          
               chown 1000:1000 /data /data/.ssh /data/.ssh/authorized_keys
               chmod 700 /data/.ssh
               chmod 600 /data/.ssh/authorized_keys /data/.hostkeys/ssh_host_ed25519_key
               exec ${pkgs.openssh}/bin/sshd -D -e -f ${sshdConfig}
             '';
           };
-
+          
           etc = pkgs.runCommand "etc" { } ''
             mkdir -p $out/etc
             cat > $out/etc/passwd <<EOF
