@@ -1,0 +1,28 @@
+
+image:
+  repository: "ghcr.io/shoce/git1"
+  tag: "latest"
+  pullPolicy: "Always"
+imagePullSecrets: []
+
+AuthorizedKeys: []
+
+hostPort:
+  enabled: false
+  port: 585
+
+service:
+  enabled: true
+  type: "ClusterIP"
+  port: 22
+  nodePort: 585
+
+persistence:
+  hostPath: "/opt/git1"
+  hostPathType: "DirectoryOrCreate"
+
+resources: {}
+nodeSelector: {}
+tolerations: []
+affinity: {}
+
