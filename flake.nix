@@ -15,7 +15,7 @@
         let
           pkgs = nixpkgs.legacyPackages.${system};
           git = pkgs.gitMinimal;   # swap to pkgs.git if git-shell is missing
-
+          
           sshdConfig = pkgs.writeText "sshd_config" ''
             Port 22
             HostKey /git1/.hostkeys/ssh_host_ed25519_key
@@ -29,7 +29,7 @@
             X11Forwarding no
             SetEnv PATH=/bin
           '';
-
+          
           entrypoint = pkgs.writeShellApplication {
             name = "entrypoint";
             runtimeInputs = [ pkgs.coreutils pkgs.openssh pkgs.gnugrep git ];
@@ -45,11 +45,13 @@
                   printf '%s\n' "$key" >> /git1/.ssh/authorized_keys
               done
               
-              [ -d /git1/git1.git ] || git init --bare -b main /git1/git1.git
-              
               chown 1000:1000 /git1 /git1/.ssh /git1/.ssh/authorized_keys
               chmod 700 /git1/.ssh
               chmod 600 /git1/.ssh/authorized_keys /git1/.hostkeys/ssh_host_ed25519_key
+              
+              [ -d /git1/git1.git ] || git init --bare -b main /git1/git1.git
+              chown -R 1000:1000 /git1/git1.git
+              
               exec ${pkgs.openssh}/bin/sshd -D -e -f ${sshdConfig}
             '';
           };
