@@ -97,7 +97,7 @@ jobs:
 
       - name: "multi-arch manifest"
         run: |
-          echo docker buildx imagetools create \
+          docker buildx imagetools create \
             -t "${IMAGE}:latest" \
             -t "${IMAGE}:${VERSION}" \
             "${IMAGE}:${VERSION}-amd64" \
