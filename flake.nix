@@ -1,3 +1,4 @@
+
 {
   
   inputs.nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
@@ -17,7 +18,7 @@
 
           sshdConfig = pkgs.writeText "sshd_config" ''
             Port 22
-            HostKey /data/.hostkeys/ssh_host_ed25519_key
+            HostKey /git1/.hostkeys/ssh_host_ed25519_key
             PidFile none
             AllowUsers git
             PasswordAuthentication no
@@ -31,22 +32,24 @@
 
           entrypoint = pkgs.writeShellApplication {
             name = "entrypoint";
-            runtimeInputs = [ pkgs.coreutils pkgs.openssh pkgs.gnugrep ];
+            runtimeInputs = [ pkgs.coreutils pkgs.openssh pkgs.gnugrep git ];
             text = ''
-              mkdir -p /data/.ssh /data/.hostkeys
-              [ -f /data/.hostkeys/ssh_host_ed25519_key ] || \
-                ssh-keygen -q -t ed25519 -N "" -f /data/.hostkeys/ssh_host_ed25519_key
-              touch /data/.ssh/authorized_keys
-          
+              mkdir -p /git1/.ssh /git1/.hostkeys
+              [ -f /git1/.hostkeys/ssh_host_ed25519_key ] || \
+                ssh-keygen -q -t ed25519 -N "" -f /git1/.hostkeys/ssh_host_ed25519_key
+              touch /git1/.ssh/authorized_keys
+              
               printf '%s\n' "''${SSH_AUTHORIZED_KEYS:-}" | while IFS= read -r key; do
                 [ -n "$key" ] || continue
-                grep -qxF -- "$key" /data/.ssh/authorized_keys || \
-                  printf '%s\n' "$key" >> /data/.ssh/authorized_keys
+                grep -qxF -- "$key" /git1/.ssh/authorized_keys || \
+                  printf '%s\n' "$key" >> /git1/.ssh/authorized_keys
               done
-          
-              chown 1000:1000 /data /data/.ssh /data/.ssh/authorized_keys
-              chmod 700 /data/.ssh
-              chmod 600 /data/.ssh/authorized_keys /data/.hostkeys/ssh_host_ed25519_key
+              
+              [ -d /git1/git1.git ] || git init --bare -b main /git1/git1.git
+              
+              chown 1000:1000 /git1 /git1/.ssh /git1/.ssh/authorized_keys
+              chmod 700 /git1/.ssh
+              chmod 600 /git1/.ssh/authorized_keys /git1/.hostkeys/ssh_host_ed25519_key
               exec ${pkgs.openssh}/bin/sshd -D -e -f ${sshdConfig}
             '';
           };
@@ -55,7 +58,7 @@
             mkdir -p $out/etc
             cat > $out/etc/passwd <<EOF
             root:x:0:0:root:/root:/bin/false
-            git:*:1000:1000:git:/data:${git}/bin/git-shell
+            git:*:1000:1000:git:/git1:${git}/bin/git-shell
             sshd:x:74:74:sshd privsep:/var/empty:/bin/false
             EOF
             cat > $out/etc/group <<EOF
@@ -78,12 +81,12 @@
               })
             ];
             extraCommands = ''
-              mkdir -p var/empty data tmp
+              mkdir -p var/empty git1 tmp
             '';
             config = {
               Entrypoint = [ "${entrypoint}/bin/entrypoint" ];
               ExposedPorts."22/tcp" = { };
-              Volumes."/data" = { };
+              Volumes."/git1" = { };
               
             };
             
