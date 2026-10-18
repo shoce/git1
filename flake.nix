@@ -68,18 +68,17 @@
               chmod 600 ${githome}/.ssh/authorized_keys \
                 ${githome}/.hostkeys/ssh_host_ed25519_key
               
-              [ -d ${githome}/${gitrepo}.git ] || {
-                echo "creating repo [${githome}/${gitrepo}.git]"
-                git init --bare -b main ${githome}/${gitrepo}.git
+              gitrepodir="${githome}/${gitrepo}.git"
+              [ -d $gitrepodir ] || {
+                echo "creating repo [$gitrepodir]"
+                git init --bare -b main "$gitrepodir"
               }
-              for d in ${githome}/*.git/ ; do
-                echo "[$d] denyNonFastForwards"
-                git -C "$d" config receive.denyNonFastForwards true || sleep 1111
-                echo "[$d] denyDeletes"
-                git -C "$d" config receive.denyDeletes true
-              done
-              echo "[$d] chown ${gituid}:${gitgid}"
-              chown -R ${gituid}:${gitgid} ${githome}/${gitrepo}.git
+              echo "[$gitrepodir] denyNonFastForwards"
+              git -C "$gitrepodir" config receive.denyNonFastForwards true || sleep 111
+              echo "[$gitrepodir] denyDeletes"
+              git -C "$gitrepodir" config receive.denyDeletes true || sleep 111
+              echo "[$gitrepodir] chown ${gituid}:${gitgid}"
+              chown -R ${gituid}:${gitgid} "$gitrepodir"
               
               echo "sshd authorized keys [-" ; cat "${githome}/.ssh/authorized_keys" ; echo "-]" ;
               echo "git remote [ssh://${gituser}@HOSTNAME:PORT/${githome}/${gitrepo}.git]"
