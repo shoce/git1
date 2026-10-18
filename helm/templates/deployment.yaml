@@ -14,6 +14,29 @@ helm.sh/chart: "{{ $.Chart.Name }}-{{ $.Chart.Version }}"
 {{- end -}}
 
 
+{{- if $.Values.service.enabled }}
+---
+apiVersion: "v1"
+kind: "Service"
+metadata:
+  name: "{{ include "git1.fullname" $ }}"
+  labels:
+    {{- include "git1.labels" $ | nindent 4 }}
+spec:
+  type: "{{ $.Values.service.type }}"
+  selector:
+    {{- include "git1.selectorLabels" $ | nindent 4 }}
+  ports:
+    - name: "ssh"
+      port: {{ $.Values.service.port }}
+      targetPort: "ssh"
+      protocol: "TCP"
+      {{- if and (eq $.Values.service.type "NodePort") $.Values.service.nodePort }}
+      nodePort: {{ $.Values.service.nodePort }}
+      {{- end }}
+{{- end }}
+
+
 ---
 apiVersion: "v1"
 kind: "Secret"
@@ -116,28 +139,5 @@ spec:
       affinity:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-
-
-{{- if .Values.service.enabled }}
----
-apiVersion: "v1"
-kind: "Service"
-metadata:
-  name: "{{ include "git1.fullname" $ }}"
-  labels:
-    {{- include "git1.labels" $ | nindent 4 }}
-spec:
-  type: "{{ $.Values.service.type }}"
-  selector:
-    {{- include "git1.selectorLabels" $ | nindent 4 }}
-  ports:
-    - name: "ssh"
-      port: {{ $.Values.service.port }}
-      targetPort: "ssh"
-      protocol: "TCP"
-      {{- if and (eq $.Values.service.type "NodePort") $.Values.service.nodePort }}
-      nodePort: {{ $.Values.service.nodePort }}
-      {{- end }}
-{{- end }}
 
 
