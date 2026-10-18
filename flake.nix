@@ -19,6 +19,7 @@
           sshdConfig = pkgs.writeText "sshd_config" ''
             Port 22
             HostKey /git1/.hostkeys/ssh_host_ed25519_key
+            LogLevel ERROR
             PidFile none
             AllowUsers git
             PasswordAuthentication no
