@@ -11,8 +11,8 @@
       packages = forAll (system:
         let
           gituser = "git";
-          gituid = 1000;
-          gitgid = 1000;
+          gituid = "1000";
+          gitgid = "1000";
           githome = "/git1";
           gitrepo = "git1";
           dimagename = "git1";
