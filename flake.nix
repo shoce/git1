@@ -8,6 +8,7 @@
     in {
       packages = forAll (system:
         let
+          gituser = "git";
           githome = "/git1";
 
           pkgs = nixpkgs.legacyPackages.${system};
@@ -18,7 +19,7 @@
             HostKey ${githome}/.hostkeys/ssh_host_ed25519_key
             #LogLevel ERROR
             PidFile none
-            AllowUsers git
+            AllowUsers ${gituser}
             PasswordAuthentication no
             KbdInteractiveAuthentication no
             PermitRootLogin no
@@ -67,15 +68,16 @@
             mkdir -p $out/etc
             cat > $out/etc/passwd <<EOF
             root:x:0:0:root:/root:/bin/false
-            git:*:1000:1000:git:${githome}:${pkggit}/bin/git-shell
+            ${gituser}:*:1000:1000:${gituser}:${githome}:${pkggit}/bin/git-shell
             sshd:x:74:74:sshd privsep:/var/empty:/bin/false
             EOF
             cat > $out/etc/group <<EOF
             root:x:0:
-            git:x:1000:
+            ${gituser}:x:1000:
             sshd:x:74:
             EOF
           '';
+          
         in {
           default = pkgs.dockerTools.buildLayeredImage {
             name = "git1";
