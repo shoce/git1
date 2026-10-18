@@ -3,8 +3,12 @@ name: "docker"
 
 on:
   push:
-    branches: ["main"]
-    paths: ["flake.nix", "flake.lock", ".github/workflows/docker.yaml"]
+    branches:
+      - "main"
+    paths:
+      - "flake.nix"
+      - "flake.lock"
+      - ".github/workflows/docker.yaml"
   workflow_dispatch:
 
 env:
@@ -38,8 +42,8 @@ jobs:
         include:
           - arch: "amd64"
             runner: "ubuntu-24.04"
-          - arch: "arm64"
-            runner: "ubuntu-24.04-arm"
+#          - arch: "arm64"
+#            runner: "ubuntu-24.04-arm"
       
     runs-on: ${{ matrix.runner }}
     
