@@ -79,9 +79,9 @@
               ls -l "$gitrepodir"
               
               echo "[$gitrepodir] denyNonFastForwards"
-              git -C "$gitrepodir" config receive.denyNonFastForwards true || sleep 111
+              git -C "$gitrepodir" config receive.denyNonFastForwards true || sleep 11
               echo "[$gitrepodir] denyDeletes"
-              git -C "$gitrepodir" config receive.denyDeletes true || sleep 111
+              git -C "$gitrepodir" config receive.denyDeletes true || sleep 11
               echo "[$gitrepodir] chown ${gituid}:${gitgid}"
               chown -R ${gituid}:${gitgid} "$gitrepodir"
               
