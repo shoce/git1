@@ -74,7 +74,7 @@
               }
               for d in ${githome}/*.git/ ; do
                 echo "[$d] denyNonFastForwards"
-                git -C "$d" config receive.denyNonFastForwards true
+                git -C "$d" config receive.denyNonFastForwards true || sleep 1111
                 echo "[$d] denyDeletes"
                 git -C "$d" config receive.denyDeletes true
               done
