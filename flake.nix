@@ -73,7 +73,11 @@
                 echo "creating repo [$gitrepodir]"
                 git init --bare -b main "$gitrepodir"
               }
+              echo "[$gitrepodir] chown ${gituid}:${gitgid}"
               chown -R ${gituid}:${gitgid} "$gitrepodir"
+              echo "[$gitrepodir] ls -l"
+              ls -l "$gitrepodir"
+              
               echo "[$gitrepodir] denyNonFastForwards"
               git -C "$gitrepodir" config receive.denyNonFastForwards true || sleep 111
               echo "[$gitrepodir] denyDeletes"
