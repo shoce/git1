@@ -11,6 +11,8 @@
       packages = forAll (system:
         let
           gituser = "git";
+          gituid = 1000;
+          gitgid = 1000;
           githome = "/git1";
           gitrepo = "git1";
           dimagename = "git1";
@@ -60,21 +62,24 @@
                   printf '%s\n' "$key" >> ${githome}/.ssh/authorized_keys
               done
               
-              chown 1000:1000 ${githome} ${githome}/.ssh \
+              chown ${gituid}:${gitgid} ${githome} ${githome}/.ssh \
                 ${githome}/.ssh/authorized_keys
               chmod 700 ${githome}/.ssh
               chmod 600 ${githome}/.ssh/authorized_keys \
                 ${githome}/.hostkeys/ssh_host_ed25519_key
               
-              [ -d ${githome}/${gitrepo}.git ] ||
+              [ -d ${githome}/${gitrepo}.git ] || {
+                echo "creating repo [${githome}/${gitrepo}.git]"
                 git init --bare -b main ${githome}/${gitrepo}.git
+              }
               for d in ${githome}/*.git/ ; do
-                echo "$d denyNonFastForwards"
-                git -C "$d" config receive.denyNonFastForwards true
-                echo "$d denyDeletes"
-                git -C "$d" config receive.denyDeletes true
+                echo "[$d] denyNonFastForwards"
+                git -C $d config receive.denyNonFastForwards true
+                echo "[$d] denyDeletes"
+                git -C $d config receive.denyDeletes true
               done
-              chown -R 1000:1000 ${githome}/${gitrepo}.git
+              echo "[$d] chown ${gituid}:${gitgid}"
+              chown -R ${gituid}:${gitgid} ${githome}/${gitrepo}.git
               
               echo "sshd authorized keys [-" ; cat "${githome}/.ssh/authorized_keys" ; echo "-]" ;
               echo "git remote [ssh://${gituser}@HOSTNAME:PORT/${githome}/${gitrepo}.git]"
@@ -89,12 +94,12 @@
             mkdir -p $out/etc
             cat > $out/etc/passwd <<EOF
             root:x:0:0:root:/root:/bin/false
-            ${gituser}:*:1000:1000:${gituser}:${githome}:${pkggit}/bin/git-shell
+            ${gituser}:*:${gituid}:${gitgid}:${gituser}:${githome}:${pkggit}/bin/git-shell
             sshd:x:74:74:sshd privsep:/var/empty:/bin/false
             EOF
             cat > $out/etc/group <<EOF
             root:x:0:
-            ${gituser}:x:1000:
+            ${gituser}:x:${gitgid}:
             sshd:x:74:
             EOF
           '';
