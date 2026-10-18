@@ -74,9 +74,9 @@
               }
               for d in ${githome}/*.git/ ; do
                 echo "[$d] denyNonFastForwards"
-                git -C $d config receive.denyNonFastForwards true
+                git -C "$d" config receive.denyNonFastForwards true
                 echo "[$d] denyDeletes"
-                git -C $d config receive.denyDeletes true
+                git -C "$d" config receive.denyDeletes true
               done
               echo "[$d] chown ${gituid}:${gitgid}"
               chown -R ${gituid}:${gitgid} ${githome}/${gitrepo}.git
