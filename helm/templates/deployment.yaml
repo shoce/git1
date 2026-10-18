@@ -46,7 +46,7 @@ metadata:
     {{- include "git1.labels" $ | nindent 4 }}
 type: "Opaque"
 stringData:
-  SSH_AUTHORIZED_KEYS: {{ join "\n" $.Values.sshAuthorizedKeys | quote }}
+  SSH_AUTHORIZED_KEYS: {{ join "\n" $.Values.AuthorizedKeys | quote }}
 
 
 ---
