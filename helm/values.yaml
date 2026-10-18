@@ -17,6 +17,7 @@ service:
   port: 22
   nodePort: 585
 
+HomeDir: "/git1"
 persistence:
   hostPath: "/opt/git1"
   hostPathType: "DirectoryOrCreate"
