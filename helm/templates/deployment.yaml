@@ -103,13 +103,14 @@ spec:
           readinessProbe:
             tcpSocket:
               port: "ssh"
-            periodSeconds: 3
+            initialDelaySeconds: 11
+            periodSeconds: 333
             
           livenessProbe:
             tcpSocket:
               port: "ssh"
             initialDelaySeconds: 111
-            periodSeconds: 3333
+            periodSeconds: 333
             
           volumeMounts:
             - name: "git1"
