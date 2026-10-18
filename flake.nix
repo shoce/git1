@@ -68,6 +68,12 @@
               
               [ -d ${githome}/${gitrepo}.git ] ||
                 git init --bare -b main ${githome}/${gitrepo}.git
+              for d in ${githome}/*.git/ ; do
+                echo "$d denyNonFastForwards"
+                git -C "$d" config receive.denyNonFastForwards true
+                echo "$d denyDeletes"
+                git -C "$d" config receive.denyDeletes true
+              done
               chown -R 1000:1000 ${githome}/${gitrepo}.git
               
               echo "sshd authorized keys [-" ; cat "${githome}/.ssh/authorized_keys" ; echo "-]" ;
