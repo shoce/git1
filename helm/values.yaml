@@ -8,6 +8,7 @@ ImagePullSecrets: []
 HostPath: "/opt/git1"
 HomeDir: "/git1"
 AuthorizedKeys: []
+GitRepos: []
 
 hostPort:
   enabled: false

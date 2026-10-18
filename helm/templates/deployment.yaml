@@ -97,6 +97,8 @@ spec:
                 secretKeyRef:
                   name: "{{ $.Values.existingSecret | default "git1" }}"
                   key: "SSH_AUTHORIZED_KEYS"
+            - name: "GIT_REPOS"
+              value: {{ join " " $.Values.GitRepos | quote }}
           
           livenessProbe:
             tcpSocket:
