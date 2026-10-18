@@ -2,7 +2,7 @@
 ImageNameGithubGit1: "ghcr.io/shoce/git1"
 ImageTagGithubGit1: ""
 
-ImagePullPolicy: "Always"
+ImagePullPolicy: "IfNotPresent"
 ImagePullSecrets: []
 
 HostPath: "/opt/git1"

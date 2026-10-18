@@ -14,7 +14,7 @@
           gituid = "1000";
           gitgid = "1000";
           githome = "/git1";
-          gitrepo = "git1";
+          gitreposdef = "git1";
           dimagename = "git1";
           
           pkgs = nixpkgs.legacyPackages.${system};
@@ -48,7 +48,8 @@
               echo "git1 version [$GIT1VERSION]"
               echo "git user [${gituser}]"
               echo "git home dir [${githome}]"
-              echo "git repo [${gitrepo}]"
+              GIT_REPOS="${GIT_REPOS:-${gitreposdef}}"
+              echo "git repos [${GIT_REPOS}]"
               
               mkdir -p ${githome}/.ssh ${githome}/.hostkeys
               [ -f ${githome}/.hostkeys/ssh_host_ed25519_key ] || \
@@ -68,25 +69,29 @@
               chmod 600 ${githome}/.ssh/authorized_keys \
                 ${githome}/.hostkeys/ssh_host_ed25519_key
               
-              gitrepodir="${githome}/${gitrepo}.git"
-              [ -d $gitrepodir ] || {
-                echo "creating repo [$gitrepodir]"
-                git init --bare -b main "$gitrepodir"
-              }
-              echo "[$gitrepodir] chown ${gituid}:${gitgid}"
-              chown -R ${gituid}:${gitgid} "$gitrepodir"
-              echo "[$gitrepodir] ls -l"
-              ls -l "$gitrepodir"
-              
-              echo "[$gitrepodir] denyNonFastForwards"
-              git -C "$gitrepodir" config receive.denyNonFastForwards true || sleep 11
-              echo "[$gitrepodir] denyDeletes"
-              git -C "$gitrepodir" config receive.denyDeletes true || sleep 11
-              echo "[$gitrepodir] chown ${gituid}:${gitgid}"
-              chown -R ${gituid}:${gitgid} "$gitrepodir"
+              for repo in ${GIT_REPOS} ; do
+                echo "repo [$repodir]"
+                repodir="${githome}/${repo}.git"
+                [ -d $repodir ] || {
+                  echo "[$repodir] creating repo"
+                  git init --bare -b main "$repodir"
+                }
+                echo "[$repodir] chown ${gituid}:${gitgid}"
+                chown -R ${gituid}:${gitgid} "$repodir"
+                echo "[$repodir] ls"
+                ls -l "$repodir"
+                echo "[$repodir] denyNonFastForwards"
+                git -C "$repodir" config receive.denyNonFastForwards true || sleep 1
+                echo "[$repodir] denyDeletes"
+                git -C "$repodir" config receive.denyDeletes true || sleep 1
+                echo "[$repodir] chown ${gituid}:${gitgid}"
+                chown -R ${gituid}:${gitgid} "$repodir"
+              done
               
               echo "sshd authorized keys [-" ; cat "${githome}/.ssh/authorized_keys" ; echo "-]" ;
-              echo "git remote [ssh://${gituser}@HOSTNAME:PORT/${githome}/${gitrepo}.git]"
+              for gitrepo in $GIT_REPOS ; do
+                echo "git remote [ssh://${gituser}@HOSTNAME:PORT/${githome}/${gitrepo}.git]"
+              done
               echo "sshd config [-" ; cat "${pkgsshdconfig}" ; echo "-]" ;
               echo "starting sshd server"
               exec ${pkgs.openssh}/bin/sshd -D -e -f ${pkgsshdconfig}
