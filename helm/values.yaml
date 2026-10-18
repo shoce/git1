@@ -5,6 +5,8 @@ ImageTagGithubGit1: "latest"
 ImagePullPolicy: "Always"
 ImagePullSecrets: []
 
+HostPath: "/opt/git1"
+HomeDir: "/git1"
 AuthorizedKeys: []
 
 hostPort:
@@ -16,11 +18,6 @@ service:
   type: "ClusterIP"
   port: 22
   nodePort: 585
-
-HomeDir: "/git1"
-persistence:
-  hostPath: "/opt/git1"
-  hostPathType: "DirectoryOrCreate"
 
 resources: {}
 nodeSelector: {}

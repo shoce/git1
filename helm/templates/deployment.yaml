@@ -115,8 +115,8 @@ spec:
       volumes:
         - name: "git1"
           hostPath:
-            path: "{{ $.Values.persistence.hostPath }}"
-            type: "{{ $.Values.persistence.hostPathType }}"
+            path: "{{ $.Values.HostPath }}"
+            type: "DirectoryOrCreate"
       
       {{- with $.Values.nodeSelector }}
       nodeSelector:
