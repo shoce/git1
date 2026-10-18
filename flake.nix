@@ -10,6 +10,7 @@
         let
           gituser = "git";
           githome = "/git1";
+          gitrepo = "git1";
 
           pkgs = nixpkgs.legacyPackages.${system};
           pkggit = pkgs.gitMinimal;
@@ -56,9 +57,9 @@
               chmod 600 ${githome}/.ssh/authorized_keys \
                 ${githome}/.hostkeys/ssh_host_ed25519_key
 
-              [ -d ${githome}/git1.git ] ||
-                git init --bare -b main ${githome}/git1.git
-              chown -R 1000:1000 ${githome}/git1.git
+              [ -d ${githome}/${gitrepo}.git ] ||
+                git init --bare -b main ${githome}/${gitrepo}.git
+              chown -R 1000:1000 ${githome}/${gitrepo}.git
 
               exec ${pkgs.openssh}/bin/sshd -D -e -f ${sshdConfig}
             '';
