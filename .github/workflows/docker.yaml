@@ -103,8 +103,7 @@ jobs:
         run: |
           docker buildx imagetools create \
             -t "${IMAGE}:${VERSION}" \
-            "${IMAGE}/amd64:${VERSION}" \
-            "${IMAGE}/arm64:${VERSION}" 
+            "${IMAGE}/amd64:${VERSION}" #"${IMAGE}/arm64:${VERSION}" 
 
       - name: "delete latest"
         uses: "jenskeiner/ghcr-container-repository-cleanup-action@v1"
