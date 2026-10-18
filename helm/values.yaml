@@ -1,6 +1,6 @@
 
 ImageNameGithubGit1: "ghcr.io/shoce/git1"
-ImageTagGithubGit1: "latest"
+ImageTagGithubGit1: ""
 
 ImagePullPolicy: "Always"
 ImagePullSecrets: []
