@@ -38,8 +38,8 @@
               mkdir -p /git1/.ssh /git1/.hostkeys
               [ -f /git1/.hostkeys/ssh_host_ed25519_key ] || \
                 ssh-keygen -q -t ed25519 -N "" -f /git1/.hostkeys/ssh_host_ed25519_key
-              touch /git1/.ssh/authorized_keys
               
+              touch /git1/.ssh/authorized_keys
               printf '%s\n' "''${SSH_AUTHORIZED_KEYS:-}" | while IFS= read -r key; do
                 [ -n "$key" ] || continue
                 grep -qxF -- "$key" /git1/.ssh/authorized_keys || \

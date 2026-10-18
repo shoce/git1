@@ -108,8 +108,8 @@ spec:
           livenessProbe:
             tcpSocket:
               port: "ssh"
-            initialDelaySeconds: 11
-            periodSeconds: 33
+            initialDelaySeconds: 111
+            periodSeconds: 3333
             
           volumeMounts:
             - name: "git1"
