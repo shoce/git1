@@ -14,11 +14,11 @@
           githome = "/git1";
           gitrepo = "git1";
           dimagename = "git1";
-
+          
           pkgs = nixpkgs.legacyPackages.${system};
           pkggit = pkgs.gitMinimal;
-
-          sshdConfig = pkgs.writeText "sshd_config" ''
+          
+          pkgsshdconfig = pkgs.writeText "sshd_config" ''
             Port 22
             HostKey ${githome}/.hostkeys/ssh_host_ed25519_key
             #LogLevel ERROR
@@ -32,8 +32,8 @@
             X11Forwarding no
             SetEnv PATH=/bin
           '';
-
-          entrypoint = pkgs.writeShellApplication {
+          
+          pkgentrypoint = pkgs.writeShellApplication {
             name = "entrypoint";
             runtimeInputs = [
               pkgs.coreutils
@@ -41,8 +41,8 @@
               pkgs.gnugrep
               pkggit
             ];
-            
             text = ''
+              
               mkdir -p ${githome}/.ssh ${githome}/.hostkeys
               [ -f ${githome}/.hostkeys/ssh_host_ed25519_key ] || \
                 ssh-keygen -q -t ed25519 -N "" \
@@ -65,12 +65,12 @@
                 git init --bare -b main ${githome}/${gitrepo}.git
               chown -R 1000:1000 ${githome}/${gitrepo}.git
 
-              exec ${pkgs.openssh}/bin/sshd -D -e -f ${sshdConfig}
+              exec ${pkgs.openssh}/bin/sshd -D -e -f ${pkgsshdconfig}
+              
             '';
-            
           };
 
-          etc = pkgs.runCommand "etc" { } ''
+          pkgetc = pkgs.runCommand "etc" { } ''
             mkdir -p $out/etc
             cat > $out/etc/passwd <<EOF
             root:x:0:0:root:/root:/bin/false
@@ -92,7 +92,7 @@
             contents = [
               (pkgs.buildEnv {
                 name = "root";
-                paths = [ git pkgs.openssh pkgs.coreutils etc ];
+                paths = [ pkggit pkgs.openssh pkgs.coreutils pkgetc ];
                 pathsToLink = [ "/bin" "/etc" ];
               })
             ];
@@ -102,7 +102,7 @@
             '';
 
             config = {
-              Entrypoint = [ "${entrypoint}/bin/entrypoint" ];
+              Entrypoint = [ "${pkgentrypoint}/bin/entrypoint" ];
               ExposedPorts."22/tcp" = { };
               Volumes.${githome} = { };
             };
