@@ -62,15 +62,15 @@ jobs:
 
       - uses: "docker/login-action@v4"
         with:
-          registry: "ghcr.io"
+          registry: "${{ env.REGISTRY }}"
           username: "${{ github.actor }}"
           password: "${{ secrets.GITHUB_TOKEN }}"
 
       - name: "load tag push"
         run: |
           docker load -i result
-          docker tag "git1:latest" "${IMAGE}:${VERSION}-${{ matrix.arch }}"
-          docker push "${IMAGE}:${VERSION}-${{ matrix.arch }}"
+          docker tag "git1:latest" "${IMAGE}/${{ matrix.arch }}:${VERSION}"
+          docker push "${IMAGE}/${{ matrix.arch }}:${VERSION}"
 
 
   manifest:
@@ -99,8 +99,8 @@ jobs:
         run: |
           docker buildx imagetools create \
             -t "${IMAGE}:${VERSION}" \
-            "${IMAGE}:${VERSION}-amd64" \
-            "${IMAGE}:${VERSION}-arm64" 
+            "${IMAGE}/amd64:${VERSION}" \
+            "${IMAGE}/arm64:${VERSION}" 
 
       - name: "delete latest"
         uses: "jenskeiner/ghcr-container-repository-cleanup-action@v1"
