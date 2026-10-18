@@ -99,17 +99,11 @@ spec:
                 secretKeyRef:
                   name: "{{ $.Values.existingSecret | default (include "git1.fullname" $) }}"
                   key: "SSH_AUTHORIZED_KEYS"
-                  
-          readinessProbe:
-            tcpSocket:
-              port: "ssh"
-            initialDelaySeconds: 11
-            periodSeconds: 333
-            
+          
           livenessProbe:
             tcpSocket:
               port: "ssh"
-            initialDelaySeconds: 111
+            initialDelaySeconds: 11
             periodSeconds: 333
             
           volumeMounts:
