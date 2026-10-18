@@ -71,6 +71,7 @@
               chown -R 1000:1000 ${githome}/${gitrepo}.git
               
               echo "sshd authorized keys [-" ; cat "${githome}/.ssh/authorized_keys" ; echo "-]" ;
+              echo "git remote [ssh://${gituser}@HOSTNAME:PORT/${githome}/${gitrepo}.git]"
               echo "sshd config [-" ; cat "${pkgsshdconfig}" ; echo "-]" ;
               echo "starting sshd server"
               exec ${pkgs.openssh}/bin/sshd -D -e -f ${pkgsshdconfig}
