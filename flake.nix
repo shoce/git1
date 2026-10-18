@@ -5,12 +5,15 @@
     let
       systems = [ "x86_64-linux" "aarch64-linux" ];
       forAll = nixpkgs.lib.genAttrs systems;
+      
     in {
+    
       packages = forAll (system:
         let
           gituser = "git";
           githome = "/git1";
           gitrepo = "git1";
+          dimagename = "git1";
 
           pkgs = nixpkgs.legacyPackages.${system};
           pkggit = pkgs.gitMinimal;
@@ -38,6 +41,7 @@
               pkgs.gnugrep
               pkggit
             ];
+            
             text = ''
               mkdir -p ${githome}/.ssh ${githome}/.hostkeys
               [ -f ${githome}/.hostkeys/ssh_host_ed25519_key ] || \
@@ -63,6 +67,7 @@
 
               exec ${pkgs.openssh}/bin/sshd -D -e -f ${sshdConfig}
             '';
+            
           };
 
           etc = pkgs.runCommand "etc" { } ''
@@ -81,7 +86,7 @@
           
         in {
           default = pkgs.dockerTools.buildLayeredImage {
-            name = "git1";
+            name = "${dimagename}";
             tag = "latest";
 
             contents = [
@@ -105,3 +110,5 @@
         });
     };
 }
+
+
