@@ -43,7 +43,7 @@
             ];
             text = ''
               
-              echo "git1 version [${GIT1VERSION}]"
+              echo "git1 version [$GIT1VERSION]"
               
               mkdir -p ${githome}/.ssh ${githome}/.hostkeys
               [ -f ${githome}/.hostkeys/ssh_host_ed25519_key ] || \
