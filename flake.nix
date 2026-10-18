@@ -14,12 +14,12 @@
       packages = forAll (system:
         let
           pkgs = nixpkgs.legacyPackages.${system};
-          git = pkgs.gitMinimal;   # swap to pkgs.git if git-shell is missing
+          git = pkgs.gitMinimal;
           
           sshdConfig = pkgs.writeText "sshd_config" ''
             Port 22
             HostKey /git1/.hostkeys/ssh_host_ed25519_key
-            LogLevel ERROR
+            #LogLevel ERROR
             PidFile none
             AllowUsers git
             PasswordAuthentication no
