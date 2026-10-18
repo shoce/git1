@@ -98,9 +98,14 @@ jobs:
       - name: "multi-arch manifest"
         run: |
           docker buildx imagetools create \
-            -t "${IMAGE}:latest" \
             -t "${IMAGE}:${VERSION}" \
             "${IMAGE}:${VERSION}-amd64" \
             "${IMAGE}:${VERSION}-arm64" 
 
+      - name: "delete latest"
+        uses: "jenskeiner/ghcr-container-repository-cleanup-action@v1"
+        with:
+          package: "${{ github.event.repository.name }}"
+          include-tags: "latest"
+          token: "${{ secrets.GITHUB_TOKEN }}"
 
