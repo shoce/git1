@@ -90,6 +90,8 @@ spec:
               {{- end }}
               
           env:
+            - name: "GIT1VERSION"
+              value: "{{ $.Values.ImageTagGithubGit1 }}"
             - name: "SSH_AUTHORIZED_KEYS"
               valueFrom:
                 secretKeyRef:

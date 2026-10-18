@@ -43,28 +43,33 @@
             ];
             text = ''
               
+              echo "git1 version [${GIT1VERSION}]"
+              
               mkdir -p ${githome}/.ssh ${githome}/.hostkeys
               [ -f ${githome}/.hostkeys/ssh_host_ed25519_key ] || \
                 ssh-keygen -q -t ed25519 -N "" \
                   -f ${githome}/.hostkeys/ssh_host_ed25519_key
-
+                  
               touch ${githome}/.ssh/authorized_keys
               printf '%s\n' "''${SSH_AUTHORIZED_KEYS:-}" | while IFS= read -r key; do
                 [ -n "$key" ] || continue
                 grep -qxF -- "$key" ${githome}/.ssh/authorized_keys || \
                   printf '%s\n' "$key" >> ${githome}/.ssh/authorized_keys
               done
-
+              
               chown 1000:1000 ${githome} ${githome}/.ssh \
                 ${githome}/.ssh/authorized_keys
               chmod 700 ${githome}/.ssh
               chmod 600 ${githome}/.ssh/authorized_keys \
                 ${githome}/.hostkeys/ssh_host_ed25519_key
-
+              
               [ -d ${githome}/${gitrepo}.git ] ||
                 git init --bare -b main ${githome}/${gitrepo}.git
               chown -R 1000:1000 ${githome}/${gitrepo}.git
-
+              
+              echo "sshd config [-" ; cat "${pkgsshdconfig}" ; echo "-]" ;
+              echo "sshd authorized keys [-" ; cat "${githome}/.ssh/authorized_keys" ; echo "-]" ;
+              echo "starting sshd server"
               exec ${pkgs.openssh}/bin/sshd -D -e -f ${pkgsshdconfig}
               
             '';
@@ -110,5 +115,6 @@
         });
     };
 }
+
 
 
