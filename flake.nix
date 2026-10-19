@@ -49,7 +49,7 @@
               echo "git user [${gituser}]"
               echo "git home dir [${githome}]"
               GIT_REPOS="''${GIT_REPOS:-${gitrepos}}"
-              echo "git repos [${GIT_REPOS}]"
+              echo "git repos [''${GIT_REPOS}]"
               
               mkdir -p ${githome}/.ssh ${githome}/.hostkeys
               [ -f ${githome}/.hostkeys/ssh_host_ed25519_key ] || \
