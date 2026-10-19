@@ -89,8 +89,8 @@
               done
               
               echo "sshd authorized keys [-" ; cat "${githome}/.ssh/authorized_keys" ; echo "-]" ;
-              for gitrepo in $GIT_REPOS ; do
-                echo "git remote [ssh://${gituser}@HOSTNAME:PORT/${githome}/${gitrepo}.git]"
+              for repo in $GIT_REPOS ; do
+                echo "git remote [ssh://${gituser}@HOSTNAME:PORT/${githome}/$repo.git]"
               done
               echo "sshd config [-" ; cat "${pkgsshdconfig}" ; echo "-]" ;
               echo "starting sshd server"
