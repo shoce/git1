@@ -14,7 +14,7 @@
           gituid = "1000";
           gitgid = "1000";
           githome = "/git1";
-          gitreposdef = "git1";
+          gitrepos = "git1";
           dimagename = "git1";
           
           pkgs = nixpkgs.legacyPackages.${system};
@@ -48,7 +48,7 @@
               echo "git1 version [$GIT1VERSION]"
               echo "git user [${gituser}]"
               echo "git home dir [${githome}]"
-              GIT_REPOS="${GIT_REPOS:-${gitreposdef}}"
+              [ -z "$GIT_REPOS" ] && GIT_REPOS="${gitrepos}"
               echo "git repos [${GIT_REPOS}]"
               
               mkdir -p ${githome}/.ssh ${githome}/.hostkeys
