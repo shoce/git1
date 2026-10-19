@@ -70,8 +70,8 @@
                 ${githome}/.hostkeys/ssh_host_ed25519_key
               
               for repo in $GIT_REPOS ; do
-                echo "repo [$repodir]"
-                repodir="${githome}/${repo}.git"
+                echo "repo [$repo]"
+                repodir="${githome}/$repo.git"
                 [ -d $repodir ] || {
                   echo "[$repodir] creating repo"
                   git init --bare -b main "$repodir"
