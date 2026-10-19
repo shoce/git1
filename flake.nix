@@ -48,7 +48,7 @@
               echo "git1 version [$GIT1VERSION]"
               echo "git user [${gituser}]"
               echo "git home dir [${githome}]"
-              [ -z "$GIT_REPOS" ] && GIT_REPOS="${gitrepos}"
+              GIT_REPOS="''${GIT_REPOS:-${gitrepos}}"
               echo "git repos [${GIT_REPOS}]"
               
               mkdir -p ${githome}/.ssh ${githome}/.hostkeys
@@ -69,7 +69,7 @@
               chmod 600 ${githome}/.ssh/authorized_keys \
                 ${githome}/.hostkeys/ssh_host_ed25519_key
               
-              for repo in ${GIT_REPOS} ; do
+              for repo in $GIT_REPOS ; do
                 echo "repo [$repodir]"
                 repodir="${githome}/${repo}.git"
                 [ -d $repodir ] || {
