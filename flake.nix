@@ -72,7 +72,7 @@
               for repo in $GIT_REPOS ; do
                 echo "repo [$repo]"
                 repodir="${githome}/$repo.git"
-                [ -d $repodir ] || {
+                [ -d "$repodir" ] || {
                   echo "[$repodir] creating repo"
                   git init --bare -b main "$repodir"
                 }
