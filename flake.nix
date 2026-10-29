@@ -57,7 +57,9 @@
               
               mkdir -p ${githome}/.ssh ${githome}/.hostkeys
               [ -f ${githome}/.hostkeys/ssh_host_ed25519_key ] || \
-                  ssh-keygen -q -t ed25519 -N "" \
+                  ssh-keygen \
+                      -q -t ed25519 -N "" \
+                      -C "${gituser}" \
                       -f ${githome}/.hostkeys/ssh_host_ed25519_key
               for fpath in ${githome}/.hostkeys/* ; do
                   echo "$fpath [-" ; cat "$fpath" || true ; echo "-]" ; 
