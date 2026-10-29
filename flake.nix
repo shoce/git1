@@ -52,6 +52,7 @@
               echo "git repos [''${GIT_REPOS}]"
               
               echo "/etc/passwd [-" ; cat "/etc/passwd" || true ; echo "-]" ; 
+              echo "/etc/group [-" ; cat "/etc/group" || true ; echo "-]" ; 
               echo "/etc/shadow [-" ; cat "/etc/shadow" || true ; echo "-]" ; 
               
               mkdir -p ${githome}/.ssh ${githome}/.hostkeys
@@ -93,7 +94,7 @@
               done
               
               for repo in $GIT_REPOS ; do
-                echo "git remote [ssh://${gituser}@HOSTNAME:PORT/${githome}/$repo.git]"
+                echo "[$repodir] git remote add git1-$repo ssh://${gituser}@HOSTNAME:22/${githome}/$repo.git"
               done
               echo "${pkgsshdconfig} [-" ; cat "${pkgsshdconfig}" ; echo "-]" ;
               echo "starting sshd server"
