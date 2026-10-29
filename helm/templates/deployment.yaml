@@ -1,11 +1,11 @@
 
 {{- define "git1.selectorLabels" -}}
-app.kubernetes.io/name: "{{ $.Chart.Name }}"
-app.kubernetes.io/instance: "{{ $.Release.Name }}"
+app.kubernetes.io/name: "{{$.Chart.Name}}"
+app.kubernetes.io/instance: "{{$.Release.Name}}"
 {{- end -}}
 
 {{- define "git1.labels" -}}
-helm.sh/chart: "{{ $.Chart.Name }}-{{ $.Chart.Version }}"
+helm.sh/chart: "{{$.Chart.Name}}-{{$.Chart.Version}}"
 {{ include "git1.selectorLabels" $ }}
 {{- end -}}
 
@@ -19,7 +19,7 @@ metadata:
   labels:
     {{- include "git1.labels" $ | nindent 4 }}
 spec:
-  type: "{{ $.Values.service.type }}"
+  type: "{{$.Values.service.type}}"
   selector:
     {{- include "git1.selectorLabels" $ | nindent 4 }}
   ports:
@@ -28,8 +28,8 @@ spec:
       targetPort: "ssh"
       protocol: "TCP"
       {{- if and (eq $.Values.service.type "NodePort") $.Values.service.nodePort }}
-      nodePort: {{ $.Values.service.nodePort }}
-      {{- end }}
+      nodePort: {{$.Values.service.nodePort}}
+      {{- end}}
 {{- end }}
 
 
@@ -68,30 +68,31 @@ spec:
       labels:
         {{- include "git1.selectorLabels" $ | nindent 8 }}
       annotations:
+        image: "{{$.Values.ImageNameGithubGit1}}:{{$.Values.ImageTagGithubGit1}}"
         checksum/values: "{{ $.Values | toJson | sha256sum }}"
     spec:
       {{- with $.Values.ImagePullSecrets }}
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
-      {{- end }}
+      {{- end}}
       
       containers:
         
         - name: "git1"
-          image: "{{ $.Values.ImageNameGithubGit1 }}:{{ $.Values.ImageTagGithubGit1 }}"
-          imagePullPolicy: "{{ $.Values.ImagePullPolicy }}"
+          image: "{{$.Values.ImageNameGithubGit1}}:{{$.Values.ImageTagGithubGit1}}"
+          imagePullPolicy: "{{$.Values.ImagePullPolicy}}"
           
           ports:
             - name: "ssh"
               containerPort: 22
               protocol: "TCP"
               {{- if $.Values.hostPort.enabled }}
-              hostPort: {{ $.Values.hostPort.port }}
-              {{- end }}
+              hostPort: {{$.Values.hostPort.port}}
+              {{- end}}
               
           env:
             - name: "GIT1VERSION"
-              value: "{{ $.Values.ImageTagGithubGit1 }}"
+              value: "{{$.Values.ImageTagGithubGit1}}"
             - name: "SSH_AUTHORIZED_KEYS"
               valueFrom:
                 secretKeyRef:
@@ -107,32 +108,33 @@ spec:
             
           volumeMounts:
             - name: "git1"
-              mountPath: "{{ $.Values.HomeDir }}"
+              mountPath: "{{$.Values.HomeDir}}"
               
           {{- with $.Values.resources }}
           resources:
             {{- toYaml . | nindent 12 }}
-          {{- end }}
+          {{- end}}
           
       volumes:
         - name: "git1"
           hostPath:
-            path: "{{ $.Values.HostPath }}"
+            path: "{{$.Values.HostPath}}"
             type: "DirectoryOrCreate"
       
       {{- with $.Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
-      {{- end }}
+      {{- end}}
       
       {{- with $.Values.tolerations }}
       tolerations:
         {{- toYaml . | nindent 8 }}
-      {{- end }}
+      {{- end}}
       
       {{- with $.Values.affinity }}
       affinity:
         {{- toYaml . | nindent 8 }}
-      {{- end }}
+      {{- end}}
+
 
 
