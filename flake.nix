@@ -51,10 +51,14 @@
               GIT_REPOS="''${GIT_REPOS:-${gitrepos}}"
               echo "git repos [''${GIT_REPOS}]"
               
+              echo "/etc/passwd [-" ; cat "/etc/passwd" ; echo "-]" ;
+              echo "/etc/shadow [-" ; cat "/etc/shadow" ; echo "-]" ;
+              
               mkdir -p ${githome}/.ssh ${githome}/.hostkeys
               [ -f ${githome}/.hostkeys/ssh_host_ed25519_key ] || \
                 ssh-keygen -q -t ed25519 -N "" \
                   -f ${githome}/.hostkeys/ssh_host_ed25519_key
+              echo "ssh host key [$(cat ${githome}/.hostkeys/ssh_host_ed25519_key)]"
               
               touch ${githome}/.ssh/authorized_keys
               printf '%s\n' "''${SSH_AUTHORIZED_KEYS:-}" | while IFS= read -r key; do
@@ -62,6 +66,7 @@
                 grep -qxF -- "$key" ${githome}/.ssh/authorized_keys || \
                   printf '%s\n' "$key" >> ${githome}/.ssh/authorized_keys
               done
+              echo "ssh authorized keys [-" ; cat "${githome}/.ssh/authorized_keys" ; echo "-]" ;
               
               chown ${gituid}:${gitgid} ${githome} ${githome}/.ssh \
                 ${githome}/.ssh/authorized_keys
@@ -85,7 +90,6 @@
                 chown -R ${gituid}:${gitgid} "$repodir"
               done
               
-              echo "sshd authorized keys [-" ; cat "${githome}/.ssh/authorized_keys" ; echo "-]" ;
               for repo in $GIT_REPOS ; do
                 echo "git remote [ssh://${gituser}@HOSTNAME:PORT/${githome}/$repo.git]"
               done
