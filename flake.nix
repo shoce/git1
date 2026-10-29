@@ -51,14 +51,16 @@
               GIT_REPOS="''${GIT_REPOS:-${gitrepos}}"
               echo "git repos [''${GIT_REPOS}]"
               
-              echo "/etc/passwd [-" ; cat "/etc/passwd" || true ; echo "-]" ;
-              echo "/etc/shadow [-" ; cat "/etc/shadow" || true ; echo "-]" ;
+              echo "/etc/passwd [-" ; cat "/etc/passwd" || true ; echo "-]" ; 
+              echo "/etc/shadow [-" ; cat "/etc/shadow" || true ; echo "-]" ; 
               
               mkdir -p ${githome}/.ssh ${githome}/.hostkeys
               [ -f ${githome}/.hostkeys/ssh_host_ed25519_key ] || \
-                ssh-keygen -q -t ed25519 -N "" \
-                  -f ${githome}/.hostkeys/ssh_host_ed25519_key
-              echo "ssh host key [$(cat ${githome}/.hostkeys/ssh_host_ed25519_key)]"
+                  ssh-keygen -q -t ed25519 -N "" \
+                      -f ${githome}/.hostkeys/ssh_host_ed25519_key
+              for fpath in "${githome}/.hostkeys/*" ; do
+                  echo "$fpath [-" ; cat "$fpath" || true ; echo "-]" ; 
+              done
               
               touch ${githome}/.ssh/authorized_keys
               printf '%s\n' "''${SSH_AUTHORIZED_KEYS:-}" | while IFS= read -r key; do
