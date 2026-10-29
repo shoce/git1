@@ -58,7 +58,7 @@
               [ -f ${githome}/.hostkeys/ssh_host_ed25519_key ] || \
                   ssh-keygen -q -t ed25519 -N "" \
                       -f ${githome}/.hostkeys/ssh_host_ed25519_key
-              for fpath in "${githome}/.hostkeys/*" ; do
+              for fpath in ${githome}/.hostkeys/* ; do
                   echo "$fpath [-" ; cat "$fpath" || true ; echo "-]" ; 
               done
               
