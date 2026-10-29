@@ -68,7 +68,7 @@
                 grep -qxF -- "$key" ${githome}/.ssh/authorized_keys || \
                   printf '%s\n' "$key" >> ${githome}/.ssh/authorized_keys
               done
-              echo "ssh authorized keys [-" ; cat "${githome}/.ssh/authorized_keys" ; echo "-]" ;
+              echo "${githome}/.ssh/authorized_keys [-" ; cat "${githome}/.ssh/authorized_keys" ; echo "-]" ;
               
               chown ${gituid}:${gitgid} ${githome} ${githome}/.ssh \
                 ${githome}/.ssh/authorized_keys
@@ -95,7 +95,7 @@
               for repo in $GIT_REPOS ; do
                 echo "git remote [ssh://${gituser}@HOSTNAME:PORT/${githome}/$repo.git]"
               done
-              echo "sshd config [-" ; cat "${pkgsshdconfig}" ; echo "-]" ;
+              echo "${pkgsshdconfig} [-" ; cat "${pkgsshdconfig}" ; echo "-]" ;
               echo "starting sshd server"
               exec ${pkgs.openssh}/bin/sshd -D -e -f ${pkgsshdconfig}
               
