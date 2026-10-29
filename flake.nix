@@ -51,8 +51,8 @@
               GIT_REPOS="''${GIT_REPOS:-${gitrepos}}"
               echo "git repos [''${GIT_REPOS}]"
               
-              echo "/etc/passwd [-" ; cat "/etc/passwd" ; echo "-]" ;
-              echo "/etc/shadow [-" ; cat "/etc/shadow" ; echo "-]" ;
+              echo "/etc/passwd [-" ; cat "/etc/passwd" || true ; echo "-]" ;
+              echo "/etc/shadow [-" ; cat "/etc/shadow" || true ; echo "-]" ;
               
               mkdir -p ${githome}/.ssh ${githome}/.hostkeys
               [ -f ${githome}/.hostkeys/ssh_host_ed25519_key ] || \
