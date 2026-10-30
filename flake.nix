@@ -71,8 +71,9 @@
               touch ${githome}/.ssh/authorized_keys
               printf '%s\n' "''${SshAuthorizedKeys:-}" | while IFS= read -r key; do
                   test -n "$key" || continue
-                  grep -qxF -- "$key" ${githome}/.ssh/authorized_keys || \
+                  if ! grep -qxF -- "$key" ${githome}/.ssh/authorized_keys ; then
                       printf '%s\n' "$key" >> ${githome}/.ssh/authorized_keys
+                  fi
               done
               echo "${githome}/.ssh/authorized_keys [-" ; cat "${githome}/.ssh/authorized_keys" ; echo "-]" ;
               
@@ -82,14 +83,14 @@
               chmod 600 ${githome}/.ssh/authorized_keys \
                 ${githome}/.hostkeys/ssh_host_ed25519_key
               
-              GitHttpSslVerify="${GitHttpSslVerify:-}"
+              GitHttpSslVerify="''${GitHttpSslVerify:-}"
               for repo in $GitRepos ; do
                   repodir="${githome}/$repo.git"
                   echo "[$repodir]"
-                  test -d "$repodir" || {
+                  if ! test -d "$repodir" ; then
                       echo "[$repodir] creating repo"
                       git init --bare -b main "$repodir"
-                  }
+                  fi
                   echo "[$repodir] du -sk"
                   du -sk "$repodir"
                   echo "[$repodir] git config receive.denyNonFastForwards true"
