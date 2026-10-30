@@ -77,7 +77,7 @@
               done
               echo "${githome}/.ssh/authorized_keys [-" ; cat "${githome}/.ssh/authorized_keys" ; echo "-]" ;
               
-              chown ${gituid}:${gitgid} \
+              chown -R ${gituid}:${gitgid} \
                   ${githome} \
                   ${githome}/.ssh \
                   ${githome}/.ssh/authorized_keys
