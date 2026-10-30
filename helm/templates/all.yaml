@@ -1,36 +1,36 @@
 
-{{- define "git1.selectorLabels" -}}
+{{- define "git1.SelectorLabels" -}}
 app.kubernetes.io/name: "{{$.Chart.Name}}"
 app.kubernetes.io/instance: "{{$.Release.Name}}"
 {{- end -}}
 
-{{- define "git1.labels" -}}
+{{- define "git1.Labels" -}}
 helm.sh/chart: "{{$.Chart.Name}}-{{$.Chart.Version}}"
-{{ include "git1.selectorLabels" $ }}
+{{ include "git1.SelectorLabels" $ }}
 {{- end -}}
 
 
-{{- if $.Values.service.enabled }}
+{{- if $.Values.Service.Enabled }}
 ---
 apiVersion: "v1"
 kind: "Service"
 metadata:
   name: "git1"
   labels:
-    {{- include "git1.labels" $ | nindent 4 }}
+    {{- include "git1.Labels" $ | nindent 4 }}
 spec:
-  type: "{{$.Values.service.type}}"
+  type: "{{$.Values.Service.Type}}"
   selector:
-    {{- include "git1.selectorLabels" $ | nindent 4 }}
+    {{- include "git1.SelectorLabels" $ | nindent 4 }}
   ports:
     - name: "ssh"
-      port: {{ $.Values.service.port }}
+      port: {{ $.Values.Service.Port }}
       targetPort: "ssh"
       protocol: "TCP"
-      {{- if and (eq $.Values.service.type "NodePort") $.Values.service.nodePort }}
-      nodePort: {{$.Values.service.nodePort}}
+      {{- if and (eq $.Values.Service.Type "NodePort") $.Values.Service.NodePort }}
+      nodePort: {{$.Values.Service.NodePort}}
       {{- end}}
-{{- end }}
+{{- end}}
 
 
 ---
@@ -39,10 +39,10 @@ kind: "Secret"
 metadata:
   name: "git1"
   labels:
-    {{- include "git1.labels" $ | nindent 4 }}
+    {{- include "git1.Labels" $ | nindent 4 }}
 type: "Opaque"
 stringData:
-  SSH_AUTHORIZED_KEYS: {{ join "\n" $.Values.AuthorizedKeys | quote }}
+  SshAuthorizedKeys: {{ join "\n" $.Values.SshAuthorizedKeys | quote }}
 
 
 ---
@@ -51,7 +51,7 @@ kind: "Deployment"
 metadata:
   name: "git1"
   labels:
-    {{- include "git1.labels" $ | nindent 4 }}
+    {{- include "git1.Labels" $ | nindent 4 }}
     
 spec:
 
@@ -60,13 +60,13 @@ spec:
     type: "Recreate"
   selector:
     matchLabels:
-      {{- include "git1.selectorLabels" $ | nindent 6 }}
+      {{- include "git1.SelectorLabels" $ | nindent 6 }}
       
   template:
   
     metadata:
       labels:
-        {{- include "git1.selectorLabels" $ | nindent 8 }}
+        {{- include "git1.SelectorLabels" $ | nindent 8 }}
       annotations:
         image: "{{$.Values.ImageNameGithubGit1}}:{{$.Values.ImageTagGithubGit1}}"
         checksum/values: "{{ $.Values | toJson | sha256sum }}"
@@ -86,19 +86,19 @@ spec:
             - name: "ssh"
               containerPort: 22
               protocol: "TCP"
-              {{- if $.Values.hostPort.enabled }}
-              hostPort: {{$.Values.hostPort.port}}
+              {{- if gt (default 0 $.Values.HostPort) 0 }}
+              hostPort: {{$.Values.HostPort}}
               {{- end}}
               
           env:
             - name: "GIT1VERSION"
               value: "{{$.Values.ImageTagGithubGit1}}"
-            - name: "SSH_AUTHORIZED_KEYS"
+            - name: "SshAuthorizedKeys"
               valueFrom:
                 secretKeyRef:
-                  name: "{{ $.Values.existingSecret | default "git1" }}"
-                  key: "SSH_AUTHORIZED_KEYS"
-            - name: "GIT_REPOS"
+                  name: "git1"
+                  key: "SshAuthorizedKeys"
+            - name: "GitRepos"
               value: {{ join " " $.Values.GitRepos | quote }}
           
           livenessProbe:
@@ -110,7 +110,7 @@ spec:
             - name: "git1"
               mountPath: "{{$.Values.HomeDir}}"
               
-          {{- with $.Values.resources }}
+          {{- with $.Values.Resources }}
           resources:
             {{- toYaml . | nindent 12 }}
           {{- end}}
@@ -121,17 +121,17 @@ spec:
             path: "{{$.Values.HostPath}}"
             type: "DirectoryOrCreate"
       
-      {{- with $.Values.nodeSelector }}
+      {{- with $.Values.NodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
       {{- end}}
       
-      {{- with $.Values.tolerations }}
+      {{- with $.Values.Tolerations }}
       tolerations:
         {{- toYaml . | nindent 8 }}
       {{- end}}
       
-      {{- with $.Values.affinity }}
+      {{- with $.Values.Affinity }}
       affinity:
         {{- toYaml . | nindent 8 }}
       {{- end}}

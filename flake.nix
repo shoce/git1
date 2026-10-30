@@ -48,15 +48,15 @@
               echo "git1 version [$GIT1VERSION]"
               echo "git user [${gituser}]"
               echo "git home dir [${githome}]"
-              GIT_REPOS="''${GIT_REPOS:-${gitrepos}}"
-              echo "git repos [''${GIT_REPOS}]"
+              GitRepos="''${GitRepos:-${gitrepos}}"
+              echo "git repos [''${GitRepos}]"
               
               echo "/etc/passwd [-" ; cat "/etc/passwd" || true ; echo "-]" ; 
               echo "/etc/group [-" ; cat "/etc/group" || true ; echo "-]" ; 
               echo "/etc/shadow [-" ; cat "/etc/shadow" || true ; echo "-]" ; 
               
               mkdir -p ${githome}/.ssh ${githome}/.hostkeys
-              [ -f ${githome}/.hostkeys/ssh_host_ed25519_key ] || \
+              test -f ${githome}/.hostkeys/ssh_host_ed25519_key || \
                   ssh-keygen \
                       -q -t ed25519 -N "" \
                       -C "${gituser}" \
@@ -66,36 +66,36 @@
               done
               
               touch ${githome}/.ssh/authorized_keys
-              printf '%s\n' "''${SSH_AUTHORIZED_KEYS:-}" | while IFS= read -r key; do
-                [ -n "$key" ] || continue
-                grep -qxF -- "$key" ${githome}/.ssh/authorized_keys || \
-                  printf '%s\n' "$key" >> ${githome}/.ssh/authorized_keys
+              printf '%s\n' "''${SshAuthorizedKeys:-}" | while IFS= read -r key; do
+                  test -n "$key" || continue
+                  grep -qxF -- "$key" ${githome}/.ssh/authorized_keys || \
+                      printf '%s\n' "$key" >> ${githome}/.ssh/authorized_keys
               done
               echo "${githome}/.ssh/authorized_keys [-" ; cat "${githome}/.ssh/authorized_keys" ; echo "-]" ;
               
               chown ${gituid}:${gitgid} ${githome} ${githome}/.ssh \
-                ${githome}/.ssh/authorized_keys
+                  ${githome}/.ssh/authorized_keys
               chmod 700 ${githome}/.ssh
               chmod 600 ${githome}/.ssh/authorized_keys \
                 ${githome}/.hostkeys/ssh_host_ed25519_key
               
-              for repo in $GIT_REPOS ; do
-                echo "repo [$repo]"
-                repodir="${githome}/$repo.git"
-                [ -d "$repodir" ] || {
-                  echo "[$repodir] creating repo"
-                  git init --bare -b main "$repodir"
-                }
-                echo "[$repodir] du -sk"
-                du -sk "$repodir"
-                echo "[$repodir] git config"
-                git -C "$repodir" config receive.denyNonFastForwards true || sleep 1
-                git -C "$repodir" config receive.denyDeletes true || sleep 1
-                echo "[$repodir] chown ${gituid}:${gitgid}"
-                chown -R ${gituid}:${gitgid} "$repodir"
+              for repo in $GitRepos ; do
+                  echo "repo [$repo]"
+                  repodir="${githome}/$repo.git"
+                  test -d "$repodir" || {
+                      echo "[$repodir] creating repo"
+                      git init --bare -b main "$repodir"
+                  }
+                  echo "[$repodir] du -sk"
+                  du -sk "$repodir"
+                  echo "[$repodir] git config"
+                  git -C "$repodir" config receive.denyNonFastForwards true || sleep 1
+                  git -C "$repodir" config receive.denyDeletes true || sleep 1
+                  echo "[$repodir] chown ${gituid}:${gitgid}"
+                  chown -R ${gituid}:${gitgid} "$repodir"
               done
               
-              for repo in $GIT_REPOS ; do
+              for repo in $GitRepos ; do
                 echo "[$repodir] git remote add git1-$repo ssh://${gituser}@HOSTNAME:22/${githome}/$repo.git"
               done
               echo "${pkgsshdconfig} [-" ; cat "${pkgsshdconfig}" ; echo "-]" ;

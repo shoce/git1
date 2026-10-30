@@ -7,22 +7,21 @@ ImagePullSecrets: []
 
 HostPath: "/opt/git1"
 HomeDir: "/git1"
-AuthorizedKeys: []
+SshAuthorizedKeys: []
 GitRepos: []
 
-hostPort:
-  enabled: false
-  port: 585
+# HostPort is ignored if not a positive number
+HostPort: 0
 
-service:
-  enabled: true
-  type: "ClusterIP"
-  port: 22
-  nodePort: 585
+Service:
+  Enabled: true
+  Type: "ClusterIP"
+  Port: 22
+  NodePort: 585
 
-resources: {}
-nodeSelector: {}
-tolerations: []
-affinity: {}
+Resources: {}
+NodeSelector: {}
+Tolerations: []
+Affinity: {}
 
 
