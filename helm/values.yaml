@@ -9,6 +9,7 @@ HostPath: "/opt/git1"
 HomeDir: "/git1"
 SshAuthorizedKeys: []
 GitRepos: []
+GitHttpSslVerify: ""
 
 # HostPort is ignored if not a positive number
 HostPort: 0

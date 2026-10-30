@@ -56,11 +56,14 @@
               echo "/etc/shadow [-" ; cat "/etc/shadow" || true ; echo "-]" ; 
               
               mkdir -p ${githome}/.ssh ${githome}/.hostkeys
-              test -f ${githome}/.hostkeys/ssh_host_ed25519_key || \
+              if ! test -f ${githome}/.hostkeys/ssh_host_ed25519_key ; then
                   ssh-keygen \
-                      -q -t ed25519 -N "" \
+                      -q \
+                      -t "ed25519" \
+                      -N "" \
                       -C "${gituser}" \
-                      -f ${githome}/.hostkeys/ssh_host_ed25519_key
+                      -f "${githome}/.hostkeys/ssh_host_ed25519_key"
+              fi
               for fpath in ${githome}/.hostkeys/* ; do
                   echo "$fpath [-" ; cat "$fpath" || true ; echo "-]" ; 
               done
@@ -80,17 +83,22 @@
                 ${githome}/.hostkeys/ssh_host_ed25519_key
               
               for repo in $GitRepos ; do
-                  echo "repo [$repo]"
                   repodir="${githome}/$repo.git"
+                  echo "[$repodir]"
                   test -d "$repodir" || {
                       echo "[$repodir] creating repo"
                       git init --bare -b main "$repodir"
                   }
                   echo "[$repodir] du -sk"
                   du -sk "$repodir"
-                  echo "[$repodir] git config"
+                  echo "[$repodir] git config receive.denyNonFastForwards true"
                   git -C "$repodir" config receive.denyNonFastForwards true || sleep 1
+                  echo "[$repodir] git config receive.denyDeletes true"
                   git -C "$repodir" config receive.denyDeletes true || sleep 1
+                  if test -n "$GitHttpSslVerify" ; then
+                      echo "[$repodir] git config http.sslVerify $GitHttpSslVerify"
+                      git -C "$repodir" config http.sslVerify "$GitHttpSslVerify" || sleep 1
+                  fi
                   echo "[$repodir] chown ${gituid}:${gitgid}"
                   chown -R ${gituid}:${gitgid} "$repodir"
               done
