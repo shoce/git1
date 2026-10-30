@@ -82,6 +82,7 @@
               chmod 600 ${githome}/.ssh/authorized_keys \
                 ${githome}/.hostkeys/ssh_host_ed25519_key
               
+              GitHttpSslVerify="${GitHttpSslVerify:-}"
               for repo in $GitRepos ; do
                   repodir="${githome}/$repo.git"
                   echo "[$repodir]"
