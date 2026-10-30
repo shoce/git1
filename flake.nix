@@ -46,6 +46,7 @@
             text = ''
               
               echo "git1 version [$GIT1VERSION]"
+              echo "id [$(id)]"
               echo "git user [${gituser}]"
               echo "git home dir [${githome}]"
               GitRepos="''${GitRepos:-${gitrepos}}"
