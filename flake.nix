@@ -95,12 +95,10 @@
                   fi
                   echo "[$repodir] du -sk"
                   du -sk "$repodir"
-                  echo "[$repodir] git config receive.denyNonFastForwards true"
+                  echo "[$repodir] git config"
                   echo +git -C "$repodir" config receive.denyNonFastForwards true || sleep 1
-                  echo "[$repodir] git config receive.denyDeletes true"
                   echo +git -C "$repodir" config receive.denyDeletes true || sleep 1
                   if test -n "$GitHttpSslVerify" ; then
-                      echo "[$repodir] git config http.sslVerify $GitHttpSslVerify"
                       echo +git -C "$repodir" config http.sslVerify "$GitHttpSslVerify" || sleep 1
                   fi
                   echo "[$repodir] chown ${gituid}:${gitgid}"
@@ -108,7 +106,7 @@
               done
               
               for repo in $GitRepos ; do
-                echo "[$repodir] git remote add git1-$repo ssh://${gituser}@HOSTNAME:22/${githome}/$repo.git"
+                  echo "[$repodir] git remote add git1-$repo ssh://${gituser}@HOSTNAME:22/${githome}/$repo.git"
               done
               echo "${pkgsshdconfig} [-" ; cat "${pkgsshdconfig}" ; echo "-]" ;
               echo "starting sshd server"
