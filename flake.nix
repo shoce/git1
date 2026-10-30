@@ -88,8 +88,9 @@
                   ${githome}/.hostkeys/ssh_host_ed25519_key
               
               GitHttpSslVerify="''${GitHttpSslVerify:-}"
+              
               for repo in $GitRepos ; do
-                  repodir="${githome}/$repo.git"
+                  repodir="${githome}/$repo.git/"
                   echo "[$repodir]"
                   if ! test -d "$repodir" ; then
                       echo "[$repodir] creating repo"
