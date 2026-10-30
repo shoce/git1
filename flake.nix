@@ -77,11 +77,15 @@
               done
               echo "${githome}/.ssh/authorized_keys [-" ; cat "${githome}/.ssh/authorized_keys" ; echo "-]" ;
               
-              chown ${gituid}:${gitgid} ${githome} ${githome}/.ssh \
+              chown ${gituid}:${gitgid} \
+                  ${githome} \
+                  ${githome}/.ssh \
                   ${githome}/.ssh/authorized_keys
-              chmod 700 ${githome}/.ssh
-              chmod 600 ${githome}/.ssh/authorized_keys \
-                ${githome}/.hostkeys/ssh_host_ed25519_key
+              chmod 700 \
+                  ${githome}/.ssh
+              chmod 600 \
+                  ${githome}/.ssh/authorized_keys \
+                  ${githome}/.hostkeys/ssh_host_ed25519_key
               
               GitHttpSslVerify="''${GitHttpSslVerify:-}"
               for repo in $GitRepos ; do
