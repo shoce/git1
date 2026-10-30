@@ -78,15 +78,11 @@
               done
               echo "${githome}/.ssh/authorized_keys [-" ; cat "${githome}/.ssh/authorized_keys" ; echo "-]" ;
               
-              chown -R ${gituid}:${gitgid} \
-                  ${githome} \
-                  ${githome}/.ssh \
-                  ${githome}/.ssh/authorized_keys
-              chmod 700 \
-                  ${githome}/.ssh
+              chown -R "${gituid}:${gitgid}" "${githome}"
+              chmod 700 "${githome}/.ssh"
               chmod 600 \
-                  ${githome}/.ssh/authorized_keys \
-                  ${githome}/.hostkeys/ssh_host_ed25519_key
+                  "${githome}/.ssh/authorized_keys" \
+                  "${githome}/.hostkeys/ssh_host_ed25519_key"
               
               GitHttpSslVerify="''${GitHttpSslVerify:-}"
               
@@ -100,15 +96,15 @@
                   echo "[$repodir] du -sk"
                   du -sk "$repodir"
                   echo "[$repodir] git config receive.denyNonFastForwards true"
-                  git -C "$repodir" config receive.denyNonFastForwards true || sleep 1
+                  echo +git -C "$repodir" config receive.denyNonFastForwards true || sleep 1
                   echo "[$repodir] git config receive.denyDeletes true"
-                  git -C "$repodir" config receive.denyDeletes true || sleep 1
+                  echo +git -C "$repodir" config receive.denyDeletes true || sleep 1
                   if test -n "$GitHttpSslVerify" ; then
                       echo "[$repodir] git config http.sslVerify $GitHttpSslVerify"
-                      git -C "$repodir" config http.sslVerify "$GitHttpSslVerify" || sleep 1
+                      echo +git -C "$repodir" config http.sslVerify "$GitHttpSslVerify" || sleep 1
                   fi
                   echo "[$repodir] chown ${gituid}:${gitgid}"
-                  chown -R ${gituid}:${gitgid} "$repodir"
+                  chown -R "${gituid}:${gitgid}" "$repodir"
               done
               
               for repo in $GitRepos ; do
