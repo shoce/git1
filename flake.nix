@@ -56,8 +56,8 @@
               echo "/etc/group [-" ; cat "/etc/group" || true ; echo "-]" ; 
               echo "/etc/shadow [-" ; cat "/etc/shadow" || true ; echo "-]" ; 
               
-              mkdir -p ${githome}/.ssh ${githome}/.hostkeys
-              if ! test -f ${githome}/.hostkeys/ssh_host_ed25519_key ; then
+              mkdir -p "${githome}/.ssh" "${githome}/.hostkeys"
+              if ! test -f "${githome}/.hostkeys/ssh_host_ed25519_key" ; then
                   ssh-keygen \
                       -q \
                       -t "ed25519" \
@@ -69,14 +69,15 @@
                   echo "$fpath [-" ; cat "$fpath" || true ; echo "-]" ; 
               done
               
-              touch ${githome}/.ssh/authorized_keys
+              AuthKeysPath="${githome}/.ssh/authorized_keys"
+              touch "$AuthKeysPath"
               printf '%s\n' "''${SshAuthorizedKeys:-}" | while IFS= read -r key; do
                   test -n "$key" || continue
-                  if ! grep -qxF -- "$key" ${githome}/.ssh/authorized_keys ; then
-                      printf '%s\n' "$key" >> ${githome}/.ssh/authorized_keys
+                  if ! grep -qxF -- "$key" "$AuthKeysPath" ; then
+                      printf '%s\n' "$key" >> "$AuthKeysPath"
                   fi
               done
-              echo "${githome}/.ssh/authorized_keys [-" ; cat "${githome}/.ssh/authorized_keys" ; echo "-]" ;
+              echo "$AuthKeysPath [-" ; cat "$AuthKeysPath" ; echo "-]" ;
               
               chown -R "${gituid}:${gitgid}" "${githome}"
               chmod 700 "${githome}/.ssh"
