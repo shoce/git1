@@ -30,10 +30,9 @@
             KbdInteractiveAuthentication no
             PermitRootLogin no
             PermitTTY no
+            AllowTcpForwarding no
             X11Forwarding no
             SetEnv PATH=/bin
-            AllowTcpForwarding local
-            PermitOpen *:55555
           '';
           
           pkgentrypoint = pkgs.writeShellApplication {
